@@ -8,7 +8,8 @@
 </head>
 <body>
     <div class="top-cover-layer"></div>
-    <header class="site-header" id="siteHeader"> <div class="container">
+    <header class="site-header" id="siteHeader"> 
+        <div class="container">
             <div class="header-content">
                 <div class="site-branding">
                     <h1>Vida Plena em Schroeder</h1>
@@ -54,7 +55,7 @@
                     <li><strong>Ritmo do Sono:</strong> Procure dormir e despertar sempre nos mesmos horários, até mesmo quando o fim de semana chegar. Transforme o seu quarto em um refúgio de tranquilidade, com pouca luz e sem barulho, e deixe de lado as telas (celular, tablet, televisão) pelo menos uma hora antes de se deitar.</li>
                     <li><strong>Controle do Stress:</strong> Mesmo com a calmaria de Schroeder, o estresse pode aparecer. Técnicas como meditação, respiração profunda ou um passatempo relaxante podem ser ótimas opções. Já pensou em caminhar à beira do <strong>Rio Itapocu</strong> para relaxar?</li>
                     <li><strong>Laços Sociais:</strong> Não perca o contato com seus amigos e familiares. Participar de eventos da cidade ou atividades em Schroeder, como festas típicas ou feiras, também ajuda a criar laços e promove alegria.</li>
-                    <li><strong>Seu Momento:</strong> Separe um tempo para fazer o que te dá prazer, seja ler um livro na <strong>Biblioteca Pública Municipal</strong>, escutar suas músicas favoritas ou simplesmente descansar em um lugar sossegado.</li>
+                    <li><strong>Seu Momento:</strong> Separe um tempo para fazer o que te dá prazer, seja ler um livro na <strong>Biblioteca Pública Municipal</strong>, escutar suas músicas favoritas ou simplesmente descansar em um lugar surpreendente.</li>
                     <li><strong>Beba Água:</strong> Mantenha-se hidratado bebendo água durante todo o dia. A água é vital para o bom funcionamento do corpo e para manter sua energia em alta.</li>
                 </ul>
             </div>
@@ -232,25 +233,23 @@
             } else {
                 classificacao = 'Sua Obesidade é Grau III (mórbida)';
             }
-                campoClassificacao.textContent = classificacao;
+            campoClassificacao.textContent = classificacao;
         }
 
-        // **NOVA FUNÇÃO:** Ajusta dinamicamente o scroll-margin-top das seções
+        // Função que ajusta dinamicamente os espaçamentos baseados na altura real do cabeçalho fixo
         function adjustScrollMargin() {
-            const header = document.getElementById('siteHeader'); // Seleciona o cabeçalho pelo ID
-            const sections = document.querySelectorAll('.section-content'); // Seleciona todas as seções
+            const header = document.getElementById('siteHeader'); 
+            const sections = document.querySelectorAll('.section-content'); 
 
             if (header && sections.length > 0) {
-                // Obtém a altura real do cabeçalho
                 const headerHeight = header.offsetHeight; 
-                // Adiciona uma pequena margem extra (ex: 15px) para garantir que o título não fique colado
                 const safeMargin = headerHeight + 15; 
 
                 sections.forEach(section => {
                     section.style.scrollMarginTop = `${safeMargin}px`;
                 });
 
-                // **OPCIONAL:** Ajusta o padding-top do body para que o conteúdo não fique por baixo do cabeçalho
+                // Empurra o corpo da página para baixo no desktop para o conteúdo não nascer atrás do menu
                 document.body.style.paddingTop = `${headerHeight}px`;
             }
         }
@@ -259,27 +258,42 @@
             const botaoMenu = document.querySelector('.menu-toggle');
             const linksNav = document.querySelector('.main-nav .nav-links');
             const botaoVoltarTopo = document.getElementById('backToTopBtn');
+            const header = document.getElementById('siteHeader');
 
             // Abre/fecha menu no mobile
-            botaoMenu.addEventListener('click', function() {
+            botaoMenu.addEventListener('click', function(e) {
+                e.stopPropagation(); // Evita que o clique se propague e feche o menu imediatamente
                 linksNav.classList.toggle('active');
             });
 
-            // Esconde o menu ao clicar no link (mobile)
+            // Esconde o menu ao clicar em qualquer link (mobile)
             linksNav.querySelectorAll('a').forEach(link => {
                 link.addEventListener('click', function() {
-                        if (linksNav.classList.contains('active')) {
-                            linksNav.classList.remove('active');
-                        }
-                    });
+                    if (linksNav.classList.contains('active')) {
+                        linksNav.classList.remove('active');
+                    }
                 });
+            });
 
-            // Mostra/esconde botão de voltar ao topo
+            // Fecha o menu se o usuário clicar em qualquer área fora do cabeçalho
+            document.addEventListener('click', function(event) {
+                if (linksNav.classList.contains('active') && !header.contains(event.target)) {
+                    linksNav.classList.remove('active');
+                }
+            });
+
+            // Monitora a rolagem da página
             window.addEventListener('scroll', function() {
+                // Controla a visibilidade do botão voltar ao topo
                 if (window.scrollY > 200) {
                     botaoVoltarTopo.style.display = 'block';
                 } else {
                     botaoVoltarTopo.style.display = 'none';
+                }
+
+                // Fecha o menu automaticamente caso o usuário role a página com ele aberto
+                if (linksNav.classList.contains('active')) {
+                    linksNav.classList.remove('active');
                 }
             });
 
@@ -291,12 +305,10 @@
                 });
             });
 
-            // Chama a função de ajuste de rolagem quando a página é carregada
+            // Executa os cálculos de dimensões ao carregar e redimensionar a tela
             adjustScrollMargin();
-            // Chama a função sempre que a janela for redimensionada (ex: rotação do tablet)
             window.addEventListener('resize', adjustScrollMargin);
         });
-
     </script>
 </body>
 </html>
